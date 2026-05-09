@@ -100,51 +100,188 @@
         </div>
       </div>
 
-      <!-- ფორმის სექცია (დაშორებულია ფოტოებისგან) -->
-      <div class="row mt-5 pt-3 justify-content-center">
-        <div class="col-lg-8 text-center">
-          <form method="POST" action="https://script.google.com/macros/s/AKfycbzT9sI96KDjUeRAZk6rUOPO-Q-zuEisZvbM6Q1fwD7hzjqRfeDc_9bjaTLZKMKgY9HkYA/exec" id="my-form" class="custom-form mx-auto">
+<!-- ფორმის სექცია -->
+<div class="row mt-5 pt-3 justify-content-center">
+  <div class="col-lg-8 text-center">
 
-            <h2 class="form-title mb-4">დადასტურება</h2>
-            <p>გთხოვთ დაადასტუროთ 20 მაისამდე</p>
+    <form 
+      method="POST"
+      action="https://script.google.com/macros/s/AKfycbzT9sI96KDjUeRAZk6rUOPO-Q-zuEisZvbM6Q1fwD7hzjqRfeDc_9bjaTLZKMKgY9HkYA/exec"
+      id="my-form"
+      class="custom-form mx-auto"
+    >
 
-            <!-- სახელი -->
-            <div class="form-group mb-3">
-              <input type="text" id="nama" name="nama" required placeholder="სახელი და გვარი" style="text-align: center; max-width: 300px; width: 100%; margin: 0 auto; display: block;">
-            </div>
+      <h2 class="form-title mb-4">დადასტურება</h2>
+      <p>გთხოვთ დაადასტუროთ 20 მაისამდე</p>
 
-            <!-- დიახ / არა -->
-            <div class="form-toggle mb-3 d-flex justify-content-center align-items-center gap-3">
-              <div>
-                <input type="radio" id="yes" name="status" value="მოვდივარ" checked>
-                <label for="yes">დიახ</label>
-              </div>
-
-              <div>
-                <input type="radio" id="no" name="status" value="ვერ მოვდივარ">
-                <label for="no">არა</label>
-              </div>
-            </div>
-
-            <!-- რაოდენობა -->
-            <div class="form-quantity mb-4">
-              <input 
-  type="number" 
-  name="jumlah" 
-  id="guestCount"
-  value="1" 
-  min="1" 
-  max="10"
-  style="text-align: center; width: 70px; margin: 0 auto; display: block;">
-
-            </div>
-
-            <!-- ღილაკი -->
-            <button type="submit" class="submit-btn mt-2">გაგზავნა</button>
-
-          </form>
-        </div>
+      <!-- სახელი -->
+      <div class="form-group mb-3">
+        <input 
+          type="text"
+          id="nama"
+          name="nama"
+          minlength="7"
+          required
+          placeholder="სახელი და გვარი"
+          style="
+            text-align: center;
+            max-width: 300px;
+            width: 100%;
+            margin: 0 auto;
+            display: block;
+          "
+        >
       </div>
+
+      <!-- დიახ / არა -->
+      <div class="form-toggle mb-3 d-flex justify-content-center align-items-center gap-3">
+
+        <div>
+          <input type="radio" id="yes" name="status" value="მოვდივარ" checked>
+          <label for="yes">დიახ</label>
+        </div>
+
+        <div>
+          <input type="radio" id="no" name="status" value="ვერ მოვდივარ">
+          <label for="no">არა</label>
+        </div>
+
+      </div>
+
+      <!-- რაოდენობა -->
+      <div class="form-quantity mb-4 text-center">
+
+        <label 
+          for="guestCount"
+          style="
+            display:block;
+            margin-bottom:10px;
+            font-weight:600;
+          "
+        >
+          შეიყვანეთ სტუმრების რაოდენობა
+        </label>
+
+        <input 
+          type="number"
+          name="jumlah"
+          id="guestCount"
+          placeholder="მაგ: 2"
+          min="1"
+          max="10"
+          required
+          style="
+            text-align: center;
+            width: 90px;
+            margin: 0 auto;
+            display: block;
+            padding: 8px;
+          "
+        >
+
+      </div>
+
+      <!-- ღილაკი -->
+      <button type="submit" class="submit-btn mt-2">
+        გაგზავნა
+      </button>
+
+    </form>
+
+  </div>
+</div>
+
+<!-- FORM VALIDATION + SUBMIT -->
+<script>
+window.addEventListener("load", function() {
+
+  const form = document.getElementById('my-form');
+  const guestInput = document.getElementById("guestCount");
+  const nameInput = document.getElementById("nama");
+
+  const yesRadio = document.getElementById("yes");
+  const noRadio = document.getElementById("no");
+
+  // 🔥 სტუმრების რაოდენობის select focus
+  guestInput.addEventListener("focus", function() {
+    this.select();
+  });
+
+  // 🔥 თუ ვერ მოდის
+  noRadio.addEventListener("change", () => {
+
+    if (noRadio.checked) {
+      guestInput.value = "0";
+      guestInput.disabled = true;
+    }
+
+  });
+
+  // 🔥 თუ მოდის
+  yesRadio.addEventListener("change", () => {
+
+    if (yesRadio.checked) {
+      guestInput.value = "";
+      guestInput.disabled = false;
+    }
+
+  });
+
+  // 🔥 submit
+  form.addEventListener("submit", function(e) {
+
+    e.preventDefault();
+
+    const nameValue = nameInput.value.trim();
+    const guestValue = guestInput.value.trim();
+
+    // ✅ სრული სახელი
+    if (nameValue.length < 7) {
+
+      alert("გთხოვთ შეიყვანოთ სრული სახელი და გვარი");
+      nameInput.focus();
+      return;
+
+    }
+
+    // ✅ სტუმრების რაოდენობა
+    if (
+      yesRadio.checked &&
+      (guestValue === "" || Number(guestValue) < 1)
+    ) {
+
+      alert("გთხოვთ მიუთითოთ სტუმრების რაოდენობა");
+      guestInput.focus();
+      return;
+
+    }
+
+    const data = new FormData(form);
+    const action = form.action;
+
+    // ✅ success instantly
+    alert("თქვენი პასუხი წარმატებით გაიგზავნა!");
+
+    form.reset();
+
+    // reset state
+    guestInput.disabled = false;
+
+    // ✅ background submit
+    fetch(action, {
+      method: 'POST',
+      body: data,
+      mode: 'no-cors'
+    }).catch(() => {
+
+      console.log("Submission failed silently");
+
+    });
+
+  });
+
+});
+</script>
       
     <!-- bagian info -->
     <section id="info" class="info">
@@ -371,31 +508,6 @@ yesRadio.addEventListener("change", () => {
     guestInput.value = 1;
     guestInput.disabled = false;
   }
-});
-</script>
-<script>
-window.addEventListener("load", function() {
-  const form = document.getElementById('my-form');
-
-  form.addEventListener("submit", function(e) {
-    e.preventDefault();
-
-    const data = new FormData(form);
-    const action = form.action;
-
-    // 🔥 ეგრევე აჩვენე წარმატება
-    alert("თქვენი პასუხი წარმატებით გაიგზავნა!");
-    form.reset();
-
-    // 🔥 უკან გააგზავნე request (background-ში)
-    fetch(action, {
-      method: 'POST',
-      body: data,
-      mode: 'no-cors'
-    }).catch(() => {
-      console.log("Submission failed silently");
-    });
-  });
 });
 </script>
 
