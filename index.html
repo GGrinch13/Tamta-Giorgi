@@ -415,7 +415,7 @@ window.addEventListener("load", function() {
         });
     </script>
 
-    <script>
+<script>
 const rootElement = document.querySelector(':root');
 const audioIconWrapper = document.querySelector('.audio-icon-wrapper');
 const audioIcon = document.querySelector('.audio-icon-wrapper i');
@@ -423,92 +423,94 @@ const backSong = document.querySelector('#backSong');
 
 let isPlaying = false;
 
-// 🚀 preload audio early (მნიშვნელოვანია delay-ის მოსაშორებლად)
+// 🚀 preload audio early
 window.addEventListener("DOMContentLoaded", () => {
   backSong.load();
 });
 
-// ❌ disable scroll სანამ user არ დააჭერს
+// ✅ SCROLL LOCK
 function disableScroll() {
-  const scrollTop = window.pageYOffset;
-  const scrollLeft = window.pageXOffset;
 
-  window.onscroll = function() {
-    window.scrollTo(scrollTop, scrollLeft);
-  };
+  // save current scroll position
+  scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-  rootElement.style.scrollBehavior = 'auto';
+  document.body.style.overflow = 'hidden';
+  document.documentElement.style.overflow = 'hidden';
+  document.body.style.height = '100vh';
+
+  // prevent touch scroll on mobile
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${scrollTop}px`;
+  document.body.style.width = '100%';
 }
 
-// ✅ enable + play instantly
+// ✅ ENABLE SCROLL
 function enableScroll() {
-  window.onscroll = function() {};
+
+  document.body.style.overflow = 'auto';
+  document.documentElement.style.overflow = 'auto';
+  document.body.style.height = 'auto';
+
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.width = '';
+
+  // restore scroll position
+  window.scrollTo(0, scrollTop);
+
   rootElement.style.scrollBehavior = 'smooth';
 
   playAudio();
 }
 
-// 🎵 play audio (safe version)
+// 🚫 disable immediately
+disableScroll();
+
+// 🎵 play audio
 function playAudio() {
+
   backSong.volume = 0.5;
 
   const playPromise = backSong.play();
 
   if (playPromise !== undefined) {
+
     playPromise
       .then(() => {
+
         audioIconWrapper.style.display = 'flex';
         isPlaying = true;
+
       })
       .catch(() => {
-        console.log("Autoplay blocked, waiting for interaction...");
+
+        console.log("Autoplay blocked");
+
       });
+
   }
 }
 
-// 🔁 toggle audio
+// 🔁 audio toggle
 audioIconWrapper.onclick = function () {
+
   if (isPlaying) {
+
     backSong.pause();
+
     audioIcon.classList.remove('bi-disc');
     audioIcon.classList.add('bi-pause-circle');
+
   } else {
+
     backSong.play();
+
     audioIcon.classList.add('bi-disc');
     audioIcon.classList.remove('bi-pause-circle');
   }
 
   isPlaying = !isPlaying;
 };
-
-// 🚫 თავიდანვე დაბლოკე scroll
-disableScroll();
-</script>
-<script>
-const guestInput = document.getElementById("guestCount");
-
-guestInput.addEventListener("focus", function() {
-  this.select();
-});
-</script>
-<script>
-const yesRadio = document.getElementById("yes");
-const noRadio = document.getElementById("no");
-const guestInput2 = document.getElementById("guestCount");
-
-noRadio.addEventListener("change", () => {
-  if (noRadio.checked) {
-    guestInput.value = 0;
-    guestInput.disabled = true;
-  }
-});
-
-yesRadio.addEventListener("change", () => {
-  if (yesRadio.checked) {
-    guestInput.value = 1;
-    guestInput.disabled = false;
-  }
-});
 </script>
 
      <!-- js menamai undangan sesuai nama tamu -->
